@@ -1,6 +1,5 @@
 package com.adewan.gamevault.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -14,6 +13,8 @@ fun GVNavHost(
   startDestination: String,
 ) {
   NavHost(modifier = modifier, navController = navController, startDestination = startDestination) {
-    composable("home") { Text("Home") }
+    defaultNavigationDestinations.forEach { dest ->
+      composable(route = dest.route) { dest.renderer() }
+    }
   }
 }
