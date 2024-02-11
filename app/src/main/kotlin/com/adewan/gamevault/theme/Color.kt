@@ -1,4 +1,4 @@
-package com.adewan.gamevault.ui.theme
+package com.adewan.gamevault.theme
 
 import androidx.compose.ui.graphics.Color
 
