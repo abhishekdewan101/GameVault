@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -28,13 +27,7 @@ fun GVBottomBar(navController: NavHostController) {
     defaultNavigationDestinations.forEach { dest ->
       NavigationBarItem(
         selected = dest.route == currentDestination?.route,
-        onClick = {
-          navController.navigate(dest.route) {
-            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-            launchSingleTop = true
-            restoreState = true
-          }
-        },
+        onClick = { navController.navigate(dest.route) { navigateBottomBar(navController) } },
         icon = {
           Icon(dest.bottomNavData.icon(), modifier = Modifier.size(24.dp), contentDescription = "")
         },

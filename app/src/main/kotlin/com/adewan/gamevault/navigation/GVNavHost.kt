@@ -14,7 +14,7 @@ fun GVNavHost(
 ) {
   NavHost(modifier = modifier, navController = navController, startDestination = startDestination) {
     defaultNavigationDestinations.forEach { dest ->
-      composable(route = dest.route) { dest.renderer() }
+      composable(route = dest.route) { dest.renderer(navController) }
     }
   }
 }

@@ -7,14 +7,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavHostController
 import com.adewan.gamevault.R
+import com.adewan.gamevault.features.discover.DiscoverView
 
 data class GVBottomNavData(val label: String, val icon: @Composable () -> Painter)
 
 data class GVNavigationDestination(
   val route: String,
   val bottomNavData: GVBottomNavData,
-  val renderer: @Composable () -> Unit,
+  val renderer: @Composable (NavHostController) -> Unit,
 )
 
 val defaultNavigationDestinations =
@@ -23,7 +25,13 @@ val defaultNavigationDestinations =
       route = "discover",
       bottomNavData =
         GVBottomNavData(label = "Discover", icon = { painterResource(id = R.drawable.sparkles) }),
-      renderer = { Text("Discover") },
+      renderer = { navController ->
+        DiscoverView(
+          navigateToSearch = {
+            navController.navigate("search") { navigateBottomBar(navController) }
+          }
+        )
+      },
     ),
     GVNavigationDestination(
       route = "search",
