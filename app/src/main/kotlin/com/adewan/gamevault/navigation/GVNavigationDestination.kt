@@ -10,6 +10,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.adewan.gamevault.R
 import com.adewan.gamevault.features.discover.DiscoverView
+import com.adewan.gamevault.features.search.SearchView
 
 data class GVBottomNavData(val label: String, val icon: @Composable () -> Painter)
 
@@ -37,7 +38,7 @@ val defaultNavigationDestinations =
       route = "search",
       bottomNavData =
         GVBottomNavData(label = "Search", icon = { rememberVectorPainter(Icons.Default.Search) }),
-      renderer = { Text("Search") },
+      renderer = { SearchView() },
     ),
     GVNavigationDestination(
       route = "vault",
