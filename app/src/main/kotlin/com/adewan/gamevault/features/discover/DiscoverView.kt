@@ -48,7 +48,7 @@ fun DiscoverView(navigateToSearch: () -> Unit) {
     modifier = Modifier.fillMaxSize(),
     topBar = { DiscoverTopBar(navigateToSearch = navigateToSearch) },
   ) {
-    LazyColumn(modifier = Modifier.padding(it)) {
+    LazyColumn(modifier = Modifier.padding(it).padding(bottom = 20.dp)) {
       item { TopRatedGames() }
       item { NewlyReleasedGames() }
       item { FutureReleaseGames() }
