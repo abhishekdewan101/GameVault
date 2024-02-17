@@ -11,6 +11,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.adewan.gamevault.effects.InsetColorEffect
 import com.adewan.gamevault.navigation.GVBottomBar
@@ -37,22 +39,37 @@ private fun GameVault() {
         ),
     )
 
-    val navController = rememberNavController()
-    Scaffold(
-      modifier = Modifier.fillMaxSize(),
-      bottomBar = { GVBottomBar(navController = navController) },
-    ) {
-      GVNavHost(
-        modifier = Modifier.padding(it),
-        navController = navController,
-        startDestination = defaultNavigationDestinations.first().route,
-      )
-    }
+    GameVaultInternal()
+  }
+}
+
+@Composable
+fun GameVaultInternal() {
+  val navController = rememberNavController()
+  Scaffold(
+    modifier = Modifier.fillMaxSize(),
+    bottomBar = { GVBottomBar(navController = navController) },
+  ) {
+    GVNavHost(
+      modifier = Modifier.padding(it).padding(horizontal = 16.dp),
+      navController = navController,
+      startDestination = defaultNavigationDestinations.first().route,
+    )
   }
 }
 
 @DarkPreview
 @Composable
 fun PreviewGameVault() {
-  GameVault()
+  GameVaultTheme {
+    GameVaultInternal()
+  }
+}
+
+@Preview
+@Composable
+fun PreviewGameVaultLight() {
+  GameVaultTheme {
+    GameVaultInternal()
+  }
 }
