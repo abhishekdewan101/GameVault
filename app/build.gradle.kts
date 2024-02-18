@@ -4,6 +4,8 @@ plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsKotlinAndroid)
   alias(libs.plugins.kotlinxserilization)
+  alias(libs.plugins.ksp)
+  alias(libs.plugins.hilt)
 }
 
 android {
@@ -22,12 +24,12 @@ android {
     buildConfigField(
       "String",
       "clientId",
-      gradleLocalProperties(rootDir, providers).getProperty("clientId"),
+      "\"${gradleLocalProperties(rootDir, providers).getProperty("clientId")}\"",
     )
     buildConfigField(
       "String",
       "clientSecret",
-      gradleLocalProperties(rootDir, providers).getProperty("clientSecret"),
+      "\"${gradleLocalProperties(rootDir, providers).getProperty("clientSecret")}\"",
     )
   }
 
@@ -46,6 +48,7 @@ android {
     compose = true
     buildConfig = true
   }
+
   composeOptions { kotlinCompilerExtensionVersion = "1.5.1" }
   packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
 }
@@ -67,11 +70,17 @@ dependencies {
   implementation(libs.ktor.client.serialization)
   implementation(libs.ktor.client.content.negotiation)
   implementation(libs.ktor.serialization.kotlinx.json)
+  implementation(libs.androidx.room.runtime)
+  implementation(libs.logcat)
+  implementation(libs.androidx.room.ktx)
   testImplementation(libs.junit)
+  ksp(libs.hilt.android.compiler)
+  implementation(libs.hilt.android)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)
   androidTestImplementation(platform(libs.androidx.compose.bom))
   androidTestImplementation(libs.androidx.ui.test.junit4)
+  ksp(libs.androidx.room.compiler)
   debugImplementation(libs.androidx.ui.tooling)
   debugImplementation(libs.androidx.ui.test.manifest)
 }

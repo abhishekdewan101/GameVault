@@ -13,18 +13,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.adewan.gamevault.effects.InsetColorEffect
 import com.adewan.gamevault.navigation.GVBottomBar
 import com.adewan.gamevault.navigation.GVNavHost
 import com.adewan.gamevault.navigation.defaultNavigationDestinations
+import com.adewan.gamevault.repositories.AuthenticationRepository
 import com.adewan.gamevault.theme.GameVaultTheme
 import com.adewan.gamevault.utils.DarkPreview
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+  @Inject lateinit var authenticationRepository: AuthenticationRepository
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent { GameVault() }
+    lifecycleScope.launch { authenticationRepository.authenticateUser() }
   }
 }
 

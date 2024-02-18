@@ -8,12 +8,9 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
-interface NetworkClient {
-  suspend fun getAuthenticationCredentials(): NetworkAuthentication
-}
-
-class GameVaultClient : NetworkClient {
+class GameVaultClient @Inject constructor() {
   private val client =
     HttpClient(CIO) {
       install(ContentNegotiation) {
@@ -21,12 +18,13 @@ class GameVaultClient : NetworkClient {
           Json {
             prettyPrint = true
             isLenient = true
+            ignoreUnknownKeys = true
           }
         )
       }
     }
 
-  override suspend fun getAuthenticationCredentials(): NetworkAuthentication {
+  suspend fun getAuthenticationCredentials(): NetworkAuthentication {
     val url =
       "https://id.twitch.tv/oauth2/token?client_id=${BuildConfig.clientId}&client_secret=${BuildConfig.clientSecret}&grant_type=client_credentials"
     return client.post(url).body()
