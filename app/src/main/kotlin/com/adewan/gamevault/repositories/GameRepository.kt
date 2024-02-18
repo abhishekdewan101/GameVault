@@ -17,10 +17,10 @@ class GameRepository(
   suspend fun getTopRatedGames(): List<NetworkGame> {
     return withContext(dispatcher) {
       val query =
-        "f name,slug, rating, hypes, first_release_date, cover.url;" +
+        "f name,slug, rating, hypes, first_release_date, cover.*;" +
           "w first_release_date >= ${Instant.now().minus(Duration.ofDays(365 * 2)).epochSecond} & platforms =(167,169,130,48);" +
           "s rating desc;" +
-          "l 20;"
+          "l 30;"
       client.getGamesForQuery(
         query = query,
         accessToken = authenticationRepository.currentAuth.accessToken,
@@ -31,7 +31,7 @@ class GameRepository(
   suspend fun getUpcomingGames(): List<NetworkGame> {
     return withContext(dispatcher) {
       val query =
-        "f name,slug, rating, hypes,first_release_date, cover.url;" +
+        "f name,slug, rating, hypes,first_release_date, cover.*;" +
           "w first_release_date >= ${Instant.now().epochSecond} & platforms =(167,169,130,48);" +
           "s hypes desc;" +
           "l 20;"
@@ -45,7 +45,7 @@ class GameRepository(
   suspend fun getRecentlyReleasedGames(): List<NetworkGame> {
     return withContext(dispatcher) {
       val query =
-        "f name,slug, rating, hypes,first_release_date, cover.url;" +
+        "f name,slug, rating, hypes,first_release_date, cover.*;" +
           "w first_release_date <= ${Instant.now().epochSecond} & platforms =(167,169,130,48) & rating != null;" +
           "s first_release_date desc;" +
           "l 20;"

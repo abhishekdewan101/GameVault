@@ -13,4 +13,13 @@ data class NetworkGame(
   val cover: NetworkGameCover? = null,
 )
 
-@Serializable data class NetworkGameCover(val id: Int, val url: String)
+@Serializable
+data class NetworkGameCover(
+  val id: Int,
+  @SerialName("image_id") val imageId: String,
+  val url: String,
+) {
+  fun buildUrl(): String {
+    return "https://images.igdb.com/igdb/image/upload/t_720p/$imageId.jpg"
+  }
+}

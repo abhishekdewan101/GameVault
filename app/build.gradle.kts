@@ -74,6 +74,8 @@ dependencies {
   implementation(libs.logcat)
   implementation(libs.androidx.room.ktx)
   implementation(libs.ktor.client.logging)
+  implementation(libs.androidx.hilt.navigation.compose)
+  implementation(libs.coil.compose)
   testImplementation(libs.junit)
   ksp(libs.hilt.android.compiler)
   implementation(libs.hilt.android)

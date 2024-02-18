@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -38,42 +39,63 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.BrushPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.adewan.gamevault.GameVaultInternal
-import com.adewan.gamevault.theme.GameVaultTheme
-import com.adewan.gamevault.utils.DarkPreview
+import coil.compose.AsyncImage
+import com.adewan.gamevault.components.ErrorView
+import com.adewan.gamevault.components.ProgressView
+import com.adewan.gamevault.network.NetworkGame
+import com.adewan.gamevault.utils.UiState
+import com.adewan.gamevault.utils.getTimeAgo
 
 @Composable
-fun DiscoverView() {
+fun DiscoverView(uiState: UiState) {
   Scaffold(modifier = Modifier.fillMaxSize(), topBar = { DiscoverTopBar() }) {
-    Column(modifier = Modifier.fillMaxSize().padding(it).verticalScroll(rememberScrollState())) {
-      GameDiscoverHeroPager()
-      FutureReleaseGames()
-      NewlyReleasedGames()
+    when (uiState) {
+      is UiState.Initial,
+      is UiState.Loading -> ProgressView()
+      is UiState.Result<*> -> {
+        val data = uiState.data as DiscoverViewState
+        Column(
+          modifier = Modifier.fillMaxSize().padding(it).verticalScroll(rememberScrollState())
+        ) {
+          TopRatedGames(topRatedGames = data.topRatedGames)
+          FutureReleaseGames(upcomingGames = data.upcomingGames)
+          NewlyReleasedGames(recentlyReleasedGames = data.recentlyReleasedGames)
+        }
+      }
+      is UiState.Error -> ErrorView()
     }
   }
 }
 
 @Composable
-fun NewlyReleasedGames() {
+fun NewlyReleasedGames(recentlyReleasedGames: DiscoverViewItem) {
   Column {
-    GameListTitleRow(title = "Newly Released")
+    GameListTitleRow(title = recentlyReleasedGames.title)
     BoxWithConstraints {
       LazyRow(
         modifier = Modifier.padding(vertical = 10.dp),
         contentPadding = PaddingValues(end = 16.dp),
         horizontalArrangement = spacedBy(10.dp),
       ) {
-        items(50) {
+        items(recentlyReleasedGames.listData) {
           val width = maxWidth / 2.5f - 20.dp
-          Box(
+          AsyncImage(
+            model = it.cover?.buildUrl(),
+            contentDescription = "",
+            contentScale = ContentScale.Crop,
             modifier =
-              Modifier.sizeIn(minWidth = width)
-                .aspectRatio(3 / 4f)
-                .clip(RoundedCornerShape(10.dp))
-                .background(MaterialTheme.colorScheme.onBackground)
+              Modifier.sizeIn(minWidth = width).aspectRatio(3 / 4f).clip(RoundedCornerShape(10.dp)),
+            placeholder =
+              BrushPainter(
+                Brush.linearGradient(listOf(Color(color = 0xFFFFFFFF), Color(color = 0xFFDDDDDD)))
+              ),
           )
         }
       }
@@ -82,23 +104,27 @@ fun NewlyReleasedGames() {
 }
 
 @Composable
-fun FutureReleaseGames() {
+fun FutureReleaseGames(upcomingGames: DiscoverViewItem) {
   Column {
-    GameListTitleRow(title = "Future Releases")
+    GameListTitleRow(title = upcomingGames.title)
     BoxWithConstraints {
       LazyRow(
         modifier = Modifier.padding(vertical = 10.dp),
         contentPadding = PaddingValues(end = 16.dp),
         horizontalArrangement = spacedBy(10.dp),
       ) {
-        items(50) {
+        items(upcomingGames.listData) {
           val width = maxWidth / 2.5f - 20.dp
-          Box(
+          AsyncImage(
+            model = it.cover?.buildUrl(),
+            contentDescription = "",
+            contentScale = ContentScale.Crop,
             modifier =
-              Modifier.sizeIn(minWidth = width)
-                .aspectRatio(3 / 4f)
-                .clip(RoundedCornerShape(10.dp))
-                .background(MaterialTheme.colorScheme.onBackground)
+              Modifier.sizeIn(minWidth = width).aspectRatio(3 / 4f).clip(RoundedCornerShape(10.dp)),
+            placeholder =
+              BrushPainter(
+                Brush.linearGradient(listOf(Color(color = 0xFFFFFFFF), Color(color = 0xFFDDDDDD)))
+              ),
           )
         }
       }
@@ -120,22 +146,25 @@ private fun GameListTitleRow(title: String) {
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-private fun GameDiscoverHeroPager() {
-  val pagerState = rememberPagerState(pageCount = { 10 })
+private fun TopRatedGames(topRatedGames: DiscoverViewItem) {
+  val pagerState = rememberPagerState(pageCount = { topRatedGames.listData.size })
   HorizontalPager(modifier = Modifier.padding(vertical = 10.dp), state = pagerState) { page ->
-    HeroPagerItem(page = page)
+    HeroPagerItem(game = topRatedGames.listData[page])
   }
 }
 
 @Composable
-private fun HeroPagerItem(page: Int) {
+private fun HeroPagerItem(game: NetworkGame) {
   Row(modifier = Modifier.fillMaxWidth().padding(), verticalAlignment = Alignment.Top) {
-    Box(
-      modifier =
-        Modifier.height(200.dp)
-          .aspectRatio(3 / 4f)
-          .clip(RoundedCornerShape(10.dp))
-          .background(MaterialTheme.colorScheme.onBackground)
+    AsyncImage(
+      model = game.cover?.buildUrl(),
+      contentDescription = "",
+      contentScale = ContentScale.Crop,
+      modifier = Modifier.height(200.dp).aspectRatio(3 / 4f).clip(RoundedCornerShape(10.dp)),
+      placeholder =
+        BrushPainter(
+          Brush.linearGradient(listOf(Color(color = 0xFFFFFFFF), Color(color = 0xFFDDDDDD)))
+        ),
     )
     Column(
       horizontalAlignment = Alignment.Start,
@@ -143,15 +172,18 @@ private fun HeroPagerItem(page: Int) {
       verticalArrangement = spacedBy(5.dp),
     ) {
       Text(
-        "Game Title $page",
+        game.name,
         modifier = Modifier.padding(vertical = 5.dp),
         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
       )
       Text(
-        "Rated 100.0 out of 100.0",
+        "Rated ${String.format("%.2f",game.rating)} out of 100.0",
         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Normal),
       )
-      Text("Released 1 year ago", style = MaterialTheme.typography.bodyMedium)
+      Text(
+        "Released ${game.releaseDate?.getTimeAgo()}",
+        style = MaterialTheme.typography.bodyMedium,
+      )
     }
   }
 }
@@ -180,10 +212,4 @@ fun DiscoverTopBar() {
       }
     },
   )
-}
-
-@DarkPreview
-@Composable
-fun PreviewDiscoverView() {
-  GameVaultTheme { GameVaultInternal() }
 }

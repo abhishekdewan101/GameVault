@@ -1,11 +1,14 @@
 package com.adewan.gamevault.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.adewan.gamevault.R
 import com.adewan.gamevault.features.DiscoverView
+import com.adewan.gamevault.features.DiscoverViewModel
 import com.adewan.gamevault.features.VaultView
 
 data class GVBottomNavData(val label: String, val icon: @Composable () -> Painter)
@@ -22,7 +25,11 @@ val defaultNavigationDestinations =
       route = "discover",
       bottomNavData =
         GVBottomNavData(label = "Discover", icon = { painterResource(id = R.drawable.sparkles) }),
-      renderer = { navController -> DiscoverView() },
+      renderer = { navController ->
+        val discoverViewModel = hiltViewModel<DiscoverViewModel>()
+        LaunchedEffect(key1 = discoverViewModel) { discoverViewModel.loadDiscoverContent() }
+        DiscoverView(uiState = discoverViewModel.uiState)
+      },
     ),
     GVNavigationDestination(
       route = "vault",
