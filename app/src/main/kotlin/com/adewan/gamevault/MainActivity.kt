@@ -44,7 +44,9 @@ private fun GameVault() {
 }
 
 @Composable
-fun GameVaultInternal() {
+fun GameVaultInternal(
+  initialStartDestination: String = defaultNavigationDestinations.first().route
+) {
   val navController = rememberNavController()
   Scaffold(
     modifier = Modifier.fillMaxSize(),
@@ -53,7 +55,7 @@ fun GameVaultInternal() {
     GVNavHost(
       modifier = Modifier.padding(it).padding(horizontal = 16.dp),
       navController = navController,
-      startDestination = defaultNavigationDestinations.first().route,
+      startDestination = initialStartDestination,
     )
   }
 }
@@ -61,15 +63,11 @@ fun GameVaultInternal() {
 @DarkPreview
 @Composable
 fun PreviewGameVault() {
-  GameVaultTheme {
-    GameVaultInternal()
-  }
+  GameVaultTheme { GameVaultInternal() }
 }
 
 @Preview
 @Composable
 fun PreviewGameVaultLight() {
-  GameVaultTheme {
-    GameVaultInternal()
-  }
+  GameVaultTheme { GameVaultInternal() }
 }

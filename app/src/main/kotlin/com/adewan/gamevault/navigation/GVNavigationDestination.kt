@@ -1,12 +1,12 @@
 package com.adewan.gamevault.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.adewan.gamevault.R
 import com.adewan.gamevault.features.DiscoverView
+import com.adewan.gamevault.features.VaultView
 
 data class GVBottomNavData(val label: String, val icon: @Composable () -> Painter)
 
@@ -28,6 +28,6 @@ val defaultNavigationDestinations =
       route = "vault",
       bottomNavData =
         GVBottomNavData(label = "Vault", icon = { painterResource(id = R.drawable.vault) }),
-      renderer = { Text("Vault") },
+      renderer = { VaultView() },
     ),
   )
