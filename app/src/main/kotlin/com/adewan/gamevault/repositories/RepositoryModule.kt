@@ -6,15 +6,26 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
   @Provides
+  @Singleton
   fun providesAuthenticationRepository(
     database: GameVaultDB,
     client: GameVaultClient,
   ): AuthenticationRepository {
     return AuthenticationRepository(database = database, client = client)
+  }
+
+  @Provides
+  @Singleton
+  fun provideGameRepository(
+    authenticationRepository: AuthenticationRepository,
+    client: GameVaultClient,
+  ): GameRepository {
+    return GameRepository(authenticationRepository = authenticationRepository, client = client)
   }
 }

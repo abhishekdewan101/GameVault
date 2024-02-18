@@ -73,6 +73,7 @@ dependencies {
   implementation(libs.androidx.room.runtime)
   implementation(libs.logcat)
   implementation(libs.androidx.room.ktx)
+  implementation(libs.ktor.client.logging)
   testImplementation(libs.junit)
   ksp(libs.hilt.android.compiler)
   implementation(libs.hilt.android)
