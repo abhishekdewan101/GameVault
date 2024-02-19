@@ -54,7 +54,7 @@ import com.adewan.gamevault.utils.UiState
 import com.adewan.gamevault.utils.getTimeAgo
 
 @Composable
-fun DiscoverView(uiState: UiState, navigateToGameList: () -> Unit) {
+fun DiscoverView(uiState: UiState, navigateToGameList: (ListType) -> Unit) {
   Scaffold(modifier = Modifier.fillMaxSize(), topBar = { DiscoverTopBar() }) {
     when (uiState) {
       is UiState.Initial,
@@ -81,9 +81,14 @@ fun DiscoverView(uiState: UiState, navigateToGameList: () -> Unit) {
 }
 
 @Composable
-fun NewlyReleasedGames(recentlyReleasedGames: DiscoverViewItem, navigateToGameList: () -> Unit) {
+fun NewlyReleasedGames(
+  recentlyReleasedGames: DiscoverViewItem,
+  navigateToGameList: (ListType) -> Unit,
+) {
   Column {
-    GameListTitleRow(title = recentlyReleasedGames.title) { navigateToGameList() }
+    GameListTitleRow(title = recentlyReleasedGames.title) {
+      navigateToGameList(ListType.RECENTLY_RELEASED)
+    }
     BoxWithConstraints {
       LazyRow(
         modifier = Modifier.padding(vertical = 10.dp),
@@ -110,9 +115,9 @@ fun NewlyReleasedGames(recentlyReleasedGames: DiscoverViewItem, navigateToGameLi
 }
 
 @Composable
-fun FutureReleaseGames(upcomingGames: DiscoverViewItem, navigateToGameList: () -> Unit) {
+fun FutureReleaseGames(upcomingGames: DiscoverViewItem, navigateToGameList: (ListType) -> Unit) {
   Column {
-    GameListTitleRow(title = upcomingGames.title) { navigateToGameList() }
+    GameListTitleRow(title = upcomingGames.title) { navigateToGameList(ListType.RELEASING_SOON) }
     BoxWithConstraints {
       LazyRow(
         modifier = Modifier.padding(vertical = 10.dp),

@@ -8,6 +8,24 @@ import kotlinx.coroutines.withContext
 import java.time.Duration
 import java.time.Instant
 
+val TopRatedQuery =
+  "f name,slug, rating, hypes, first_release_date, cover.*;" +
+    "w first_release_date >= ${Instant.now().minus(Duration.ofDays(365 * 2)).epochSecond} & platforms =(167,169,130,48);" +
+    "s rating desc;" +
+    "l 30;"
+
+val UpcomingQuery =
+  "f name,slug, rating, hypes,first_release_date, cover.*;" +
+    "w first_release_date >= ${Instant.now().epochSecond} & platforms =(167,169,130,48);" +
+    "s hypes desc;" +
+    "l 20;"
+
+val RecentlyReleasedQuery =
+  "f name,slug, rating, hypes,first_release_date, cover.*;" +
+    "w first_release_date <= ${Instant.now().epochSecond} & platforms =(167,169,130,48) & rating != null;" +
+    "s first_release_date desc;" +
+    "l 20;"
+
 class GameRepository(
   private val authenticationRepository: AuthenticationRepository,
   private val client: GameVaultClient,
@@ -16,13 +34,8 @@ class GameRepository(
 
   suspend fun getTopRatedGames(): List<NetworkGame> {
     return withContext(dispatcher) {
-      val query =
-        "f name,slug, rating, hypes, first_release_date, cover.*;" +
-          "w first_release_date >= ${Instant.now().minus(Duration.ofDays(365 * 2)).epochSecond} & platforms =(167,169,130,48);" +
-          "s rating desc;" +
-          "l 30;"
       client.getGamesForQuery(
-        query = query,
+        query = TopRatedQuery,
         accessToken = authenticationRepository.currentAuth.accessToken,
       )
     }
@@ -30,13 +43,8 @@ class GameRepository(
 
   suspend fun getUpcomingGames(): List<NetworkGame> {
     return withContext(dispatcher) {
-      val query =
-        "f name,slug, rating, hypes,first_release_date, cover.*;" +
-          "w first_release_date >= ${Instant.now().epochSecond} & platforms =(167,169,130,48);" +
-          "s hypes desc;" +
-          "l 20;"
       client.getGamesForQuery(
-        query = query,
+        query = UpcomingQuery,
         accessToken = authenticationRepository.currentAuth.accessToken,
       )
     }
@@ -44,13 +52,8 @@ class GameRepository(
 
   suspend fun getRecentlyReleasedGames(): List<NetworkGame> {
     return withContext(dispatcher) {
-      val query =
-        "f name,slug, rating, hypes,first_release_date, cover.*;" +
-          "w first_release_date <= ${Instant.now().epochSecond} & platforms =(167,169,130,48) & rating != null;" +
-          "s first_release_date desc;" +
-          "l 20;"
       client.getGamesForQuery(
-        query = query,
+        query = RecentlyReleasedQuery,
         accessToken = authenticationRepository.currentAuth.accessToken,
       )
     }

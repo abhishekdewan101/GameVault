@@ -1,11 +1,13 @@
 package com.adewan.gamevault.navigation
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.adewan.gamevault.features.ListType
 
 fun NavOptionsBuilder.navigateBottomBar(navController: NavHostController) {
   popUpTo(navController.graph.findStartDestination().id) { saveState = true }
@@ -15,6 +17,16 @@ fun NavOptionsBuilder.navigateBottomBar(navController: NavHostController) {
 
 fun NavHostController.navigateToLeafScreen(route: String) {
   navigate(LEAF_SCREEN_PREFIX + route)
+}
+
+fun NavHostController.navigateToGameListView(listType: ListType) {
+  val uri =
+    Uri.Builder()
+      .path(GAME_LIST_BASE)
+      .appendQueryParameter("type", listType.name)
+      .build()
+      .toString()
+  navigateToLeafScreen(uri)
 }
 
 @Composable

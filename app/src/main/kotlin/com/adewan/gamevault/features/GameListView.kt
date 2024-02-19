@@ -1,8 +1,6 @@
 package com.adewan.gamevault.features
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -17,36 +15,71 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.BrushPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemContentType
+import androidx.paging.compose.itemKey
+import coil.compose.AsyncImage
+import com.adewan.gamevault.components.ErrorView
+import com.adewan.gamevault.components.ProgressView
+import com.adewan.gamevault.network.NetworkGame
 import com.adewan.gamevault.theme.GameVaultTheme
 import com.adewan.gamevault.utils.DarkPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 @Composable
-fun GameListView(onBack: () -> Unit) {
-  Scaffold(topBar = { GameListTopBar(onBack = onBack) }) {
+fun GameListView(title: String, games: Flow<PagingData<NetworkGame>>, onBack: () -> Unit) {
+  val games = games.collectAsLazyPagingItems()
+
+  Scaffold(topBar = { GameListTopBar(title = title, onBack = onBack) }) {
     BoxWithConstraints(modifier = Modifier.padding(it)) {
-      val width = maxWidth / 2.5f - 20.dp
-      LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        contentPadding = PaddingValues(vertical = 16.dp),
-        verticalArrangement = spacedBy(10.dp),
-        horizontalArrangement = spacedBy(10.dp),
-      ) {
-        items(100) {
-          Box(
-            modifier =
-              Modifier.sizeIn(minWidth = width)
-                .aspectRatio(3 / 4f)
-                .clip(RoundedCornerShape(10.dp))
-                .background(MaterialTheme.colorScheme.onBackground)
-          )
+      when (games.loadState.refresh) {
+        is LoadState.Loading -> ProgressView()
+        is LoadState.Error -> ErrorView()
+        else -> {
+          val width = maxWidth / 2.5f - 20.dp
+          LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            verticalArrangement = spacedBy(10.dp),
+            horizontalArrangement = spacedBy(10.dp),
+          ) {
+            items(
+              games.itemCount,
+              key = games.itemKey { game -> game.slug },
+              contentType = games.itemContentType { "MyPagingItems" },
+            ) { index ->
+              val game = games[index]
+              AsyncImage(
+                model = game?.cover?.buildUrl(),
+                contentDescription = "",
+                contentScale = ContentScale.Crop,
+                modifier =
+                  Modifier.sizeIn(minWidth = width)
+                    .aspectRatio(3 / 4f)
+                    .clip(RoundedCornerShape(10.dp)),
+                placeholder =
+                  BrushPainter(
+                    Brush.linearGradient(
+                      listOf(Color(color = 0xFFFFFFFF), Color(color = 0xFFDDDDDD))
+                    )
+                  ),
+              )
+            }
+          }
         }
       }
     }
@@ -55,9 +88,9 @@ fun GameListView(onBack: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GameListTopBar(onBack: () -> Unit) {
+fun GameListTopBar(title: String, onBack: () -> Unit) {
   CenterAlignedTopAppBar(
-    title = { Text("Game List Title", fontWeight = FontWeight.SemiBold) },
+    title = { Text(title, fontWeight = FontWeight.SemiBold) },
     navigationIcon = {
       IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "") }
     },
@@ -67,5 +100,5 @@ fun GameListTopBar(onBack: () -> Unit) {
 @DarkPreview
 @Composable
 fun PreviewGameListView() {
-  GameVaultTheme { GameListView(onBack = {}) }
+  GameVaultTheme { GameListView(title = "", games = flow {}, onBack = {}) }
 }

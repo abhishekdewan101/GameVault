@@ -28,4 +28,13 @@ object RepositoryModule {
   ): GameRepository {
     return GameRepository(authenticationRepository = authenticationRepository, client = client)
   }
+
+  @Provides
+  @Singleton
+  fun provideListRepository(
+    authenticationRepository: AuthenticationRepository,
+    client: GameVaultClient,
+  ): ListViewRepository {
+    return ListViewRepository(authenticationRepository = authenticationRepository, client = client)
+  }
 }

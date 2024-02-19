@@ -76,6 +76,8 @@ dependencies {
   implementation(libs.ktor.client.logging)
   implementation(libs.androidx.hilt.navigation.compose)
   implementation(libs.coil.compose)
+  implementation(libs.androidx.paging.runtime)
+  implementation(libs.androidx.paging.compose)
   testImplementation(libs.junit)
   ksp(libs.hilt.android.compiler)
   implementation(libs.hilt.android)
