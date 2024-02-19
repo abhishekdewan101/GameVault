@@ -19,7 +19,9 @@ data class GVNavigationDestination(
   val renderer: @Composable (NavHostController) -> Unit,
 )
 
-val defaultNavigationDestinations =
+const val GAME_LIST_ROUTE = "gameList"
+
+val defaultBottomNavigationDestinations =
   listOf(
     GVNavigationDestination(
       route = "discover",
@@ -28,7 +30,10 @@ val defaultNavigationDestinations =
       renderer = { navController ->
         val discoverViewModel = hiltViewModel<DiscoverViewModel>()
         LaunchedEffect(key1 = discoverViewModel) { discoverViewModel.loadDiscoverContent() }
-        DiscoverView(uiState = discoverViewModel.uiState)
+        DiscoverView(
+          uiState = discoverViewModel.uiState,
+          navigateToGameList = { navController.navigateToLeafScreen(GAME_LIST_ROUTE) },
+        )
       },
     ),
     GVNavigationDestination(

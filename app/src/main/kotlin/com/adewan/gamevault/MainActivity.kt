@@ -18,7 +18,8 @@ import androidx.navigation.compose.rememberNavController
 import com.adewan.gamevault.effects.InsetColorEffect
 import com.adewan.gamevault.navigation.GVBottomBar
 import com.adewan.gamevault.navigation.GVNavHost
-import com.adewan.gamevault.navigation.defaultNavigationDestinations
+import com.adewan.gamevault.navigation.defaultBottomNavigationDestinations
+import com.adewan.gamevault.navigation.hideBottomBarEffect
 import com.adewan.gamevault.repositories.AuthenticationRepository
 import com.adewan.gamevault.repositories.GameRepository
 import com.adewan.gamevault.theme.GameVaultTheme
@@ -63,12 +64,13 @@ private fun GameVault() {
 
 @Composable
 fun GameVaultInternal(
-  initialStartDestination: String = defaultNavigationDestinations.first().route
+  initialStartDestination: String = defaultBottomNavigationDestinations.first().route
 ) {
   val navController = rememberNavController()
+  val shouldHideBottomBar = hideBottomBarEffect(navController = navController)
   Scaffold(
     modifier = Modifier.fillMaxSize(),
-    bottomBar = { GVBottomBar(navController = navController) },
+    bottomBar = { if (!shouldHideBottomBar) GVBottomBar(navController = navController) },
   ) {
     GVNavHost(
       modifier = Modifier.padding(it).padding(horizontal = 16.dp),

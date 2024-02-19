@@ -24,7 +24,7 @@ fun GVBottomBar(navController: NavHostController) {
   val navBackStackEntry by navController.currentBackStackEntryAsState()
   val currentDestination = navBackStackEntry?.destination
   NavigationBar {
-    defaultNavigationDestinations.forEach { dest ->
+    defaultBottomNavigationDestinations.forEach { dest ->
       NavigationBarItem(
         selected = dest.route == currentDestination?.route,
         onClick = { navController.navigate(dest.route) { navigateBottomBar(navController) } },

@@ -54,7 +54,7 @@ import com.adewan.gamevault.utils.UiState
 import com.adewan.gamevault.utils.getTimeAgo
 
 @Composable
-fun DiscoverView(uiState: UiState) {
+fun DiscoverView(uiState: UiState, navigateToGameList: () -> Unit) {
   Scaffold(modifier = Modifier.fillMaxSize(), topBar = { DiscoverTopBar() }) {
     when (uiState) {
       is UiState.Initial,
@@ -65,8 +65,14 @@ fun DiscoverView(uiState: UiState) {
           modifier = Modifier.fillMaxSize().padding(it).verticalScroll(rememberScrollState())
         ) {
           TopRatedGames(topRatedGames = data.topRatedGames)
-          FutureReleaseGames(upcomingGames = data.upcomingGames)
-          NewlyReleasedGames(recentlyReleasedGames = data.recentlyReleasedGames)
+          FutureReleaseGames(
+            upcomingGames = data.upcomingGames,
+            navigateToGameList = navigateToGameList,
+          )
+          NewlyReleasedGames(
+            recentlyReleasedGames = data.recentlyReleasedGames,
+            navigateToGameList = navigateToGameList,
+          )
         }
       }
       is UiState.Error -> ErrorView()
@@ -75,9 +81,9 @@ fun DiscoverView(uiState: UiState) {
 }
 
 @Composable
-fun NewlyReleasedGames(recentlyReleasedGames: DiscoverViewItem) {
+fun NewlyReleasedGames(recentlyReleasedGames: DiscoverViewItem, navigateToGameList: () -> Unit) {
   Column {
-    GameListTitleRow(title = recentlyReleasedGames.title)
+    GameListTitleRow(title = recentlyReleasedGames.title) { navigateToGameList() }
     BoxWithConstraints {
       LazyRow(
         modifier = Modifier.padding(vertical = 10.dp),
@@ -104,9 +110,9 @@ fun NewlyReleasedGames(recentlyReleasedGames: DiscoverViewItem) {
 }
 
 @Composable
-fun FutureReleaseGames(upcomingGames: DiscoverViewItem) {
+fun FutureReleaseGames(upcomingGames: DiscoverViewItem, navigateToGameList: () -> Unit) {
   Column {
-    GameListTitleRow(title = upcomingGames.title)
+    GameListTitleRow(title = upcomingGames.title) { navigateToGameList() }
     BoxWithConstraints {
       LazyRow(
         modifier = Modifier.padding(vertical = 10.dp),
@@ -133,14 +139,14 @@ fun FutureReleaseGames(upcomingGames: DiscoverViewItem) {
 }
 
 @Composable
-private fun GameListTitleRow(title: String) {
+private fun GameListTitleRow(title: String, onSeeAllClicked: () -> Unit) {
   Row(
     modifier = Modifier.fillMaxWidth(),
     horizontalArrangement = Arrangement.SpaceBetween,
     verticalAlignment = Alignment.CenterVertically,
   ) {
     Text(title, fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
-    TextButton(onClick = {}) { Text("Sea all") }
+    TextButton(onClick = onSeeAllClicked) { Text("Sea all") }
   }
 }
 
