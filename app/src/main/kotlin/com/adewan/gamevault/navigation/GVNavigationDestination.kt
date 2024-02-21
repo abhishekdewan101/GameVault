@@ -23,6 +23,10 @@ const val GAME_LIST_BASE = "gameList"
 
 const val GAME_LIST_ROUTE = "$GAME_LIST_BASE?type={type}"
 
+const val GAME_DETAIL_BASE = "gamedetail"
+
+const val GAME_DETAIL_ROUTE = "gamedetail?slug={slug}"
+
 val defaultBottomNavigationDestinations =
   listOf(
     GVNavigationDestination(
@@ -34,6 +38,7 @@ val defaultBottomNavigationDestinations =
         LaunchedEffect(key1 = discoverViewModel) { discoverViewModel.loadDiscoverContent() }
         DiscoverView(
           uiState = discoverViewModel.uiState,
+          navigateToGameDetail = { slug -> navController.navigateToGameDetail(slug = slug) },
           navigateToGameList = { navController.navigateToGameListView(it) },
         )
       },

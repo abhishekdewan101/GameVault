@@ -29,6 +29,12 @@ fun NavHostController.navigateToGameListView(listType: ListType) {
   navigateToLeafScreen(uri)
 }
 
+fun NavHostController.navigateToGameDetail(slug: String) {
+  val uri =
+    Uri.Builder().path(GAME_DETAIL_BASE).appendQueryParameter("slug", slug).build().toString()
+  navigateToLeafScreen(uri)
+}
+
 @Composable
 fun hideBottomBarEffect(navController: NavHostController): Boolean {
   val navBackStackEntry by navController.currentBackStackEntryAsState()

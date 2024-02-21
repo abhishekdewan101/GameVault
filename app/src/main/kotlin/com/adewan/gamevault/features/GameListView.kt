@@ -1,5 +1,6 @@
 package com.adewan.gamevault.features
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,7 +42,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 @Composable
-fun GameListView(title: String, games: Flow<PagingData<NetworkGame>>, onBack: () -> Unit) {
+fun GameListView(
+  title: String,
+  games: Flow<PagingData<NetworkGame>>,
+  navigateToGameDetail: (String) -> Unit,
+  onBack: () -> Unit,
+) {
   val games = games.collectAsLazyPagingItems()
 
   Scaffold(topBar = { GameListTopBar(title = title, onBack = onBack) }) {
@@ -70,7 +76,8 @@ fun GameListView(title: String, games: Flow<PagingData<NetworkGame>>, onBack: ()
                 modifier =
                   Modifier.sizeIn(minWidth = width)
                     .aspectRatio(3 / 4f)
-                    .clip(RoundedCornerShape(10.dp)),
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable { game?.slug?.let { it1 -> navigateToGameDetail(it1) } },
                 placeholder =
                   BrushPainter(
                     Brush.linearGradient(
@@ -100,5 +107,7 @@ fun GameListTopBar(title: String, onBack: () -> Unit) {
 @DarkPreview
 @Composable
 fun PreviewGameListView() {
-  GameVaultTheme { GameListView(title = "", games = flow {}, onBack = {}) }
+  GameVaultTheme {
+    GameListView(title = "", games = flow {}, navigateToGameDetail = {}, onBack = {})
+  }
 }

@@ -12,6 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.adewan.gamevault.features.GameDetailView
 import com.adewan.gamevault.features.GameListView
 import com.adewan.gamevault.features.GameListViewModel
 import com.adewan.gamevault.features.ListType
@@ -37,8 +38,14 @@ fun GVNavHost(
       GameListView(
         title = type.title,
         games = viewModel.loadGames(type),
+        navigateToGameDetail = { slug -> navController.navigateToGameDetail(slug = slug) },
         onBack = { navController.popBackStack() },
       )
+    }
+    leafComposable(route = GAME_DETAIL_ROUTE, arguments = listOf(navArgument("slug") {})) {
+      val args = it.arguments ?: throw IllegalStateException()
+      val slug = args.getString("slug") ?: throw IllegalStateException()
+      GameDetailView(slug = slug)
     }
   }
 }

@@ -54,7 +54,11 @@ import com.adewan.gamevault.utils.UiState
 import com.adewan.gamevault.utils.getTimeAgo
 
 @Composable
-fun DiscoverView(uiState: UiState, navigateToGameList: (ListType) -> Unit) {
+fun DiscoverView(
+  uiState: UiState,
+  navigateToGameDetail: (String) -> Unit,
+  navigateToGameList: (ListType) -> Unit,
+) {
   Scaffold(modifier = Modifier.fillMaxSize(), topBar = { DiscoverTopBar() }) {
     when (uiState) {
       is UiState.Initial,
@@ -64,14 +68,19 @@ fun DiscoverView(uiState: UiState, navigateToGameList: (ListType) -> Unit) {
         Column(
           modifier = Modifier.fillMaxSize().padding(it).verticalScroll(rememberScrollState())
         ) {
-          TopRatedGames(topRatedGames = data.topRatedGames)
+          TopRatedGames(
+            topRatedGames = data.topRatedGames,
+            navigateToGameDetail = navigateToGameDetail,
+          )
           FutureReleaseGames(
             upcomingGames = data.upcomingGames,
             navigateToGameList = navigateToGameList,
+            navigateToGameDetail = navigateToGameDetail,
           )
           NewlyReleasedGames(
             recentlyReleasedGames = data.recentlyReleasedGames,
             navigateToGameList = navigateToGameList,
+            navigateToGameDetail = navigateToGameDetail,
           )
         }
       }
@@ -84,6 +93,7 @@ fun DiscoverView(uiState: UiState, navigateToGameList: (ListType) -> Unit) {
 fun NewlyReleasedGames(
   recentlyReleasedGames: DiscoverViewItem,
   navigateToGameList: (ListType) -> Unit,
+  navigateToGameDetail: (String) -> Unit,
 ) {
   Column {
     GameListTitleRow(title = recentlyReleasedGames.title) {
@@ -102,7 +112,10 @@ fun NewlyReleasedGames(
             contentDescription = "",
             contentScale = ContentScale.Crop,
             modifier =
-              Modifier.sizeIn(minWidth = width).aspectRatio(3 / 4f).clip(RoundedCornerShape(10.dp)),
+              Modifier.sizeIn(minWidth = width)
+                .aspectRatio(3 / 4f)
+                .clip(RoundedCornerShape(10.dp))
+                .clickable { navigateToGameDetail(it.slug) },
             placeholder =
               BrushPainter(
                 Brush.linearGradient(listOf(Color(color = 0xFFFFFFFF), Color(color = 0xFFDDDDDD)))
@@ -115,7 +128,11 @@ fun NewlyReleasedGames(
 }
 
 @Composable
-fun FutureReleaseGames(upcomingGames: DiscoverViewItem, navigateToGameList: (ListType) -> Unit) {
+fun FutureReleaseGames(
+  upcomingGames: DiscoverViewItem,
+  navigateToGameList: (ListType) -> Unit,
+  navigateToGameDetail: (String) -> Unit,
+) {
   Column {
     GameListTitleRow(title = upcomingGames.title) { navigateToGameList(ListType.RELEASING_SOON) }
     BoxWithConstraints {
@@ -131,7 +148,10 @@ fun FutureReleaseGames(upcomingGames: DiscoverViewItem, navigateToGameList: (Lis
             contentDescription = "",
             contentScale = ContentScale.Crop,
             modifier =
-              Modifier.sizeIn(minWidth = width).aspectRatio(3 / 4f).clip(RoundedCornerShape(10.dp)),
+              Modifier.sizeIn(minWidth = width)
+                .aspectRatio(3 / 4f)
+                .clip(RoundedCornerShape(10.dp))
+                .clickable { navigateToGameDetail(it.slug) },
             placeholder =
               BrushPainter(
                 Brush.linearGradient(listOf(Color(color = 0xFFFFFFFF), Color(color = 0xFFDDDDDD)))
@@ -157,16 +177,19 @@ private fun GameListTitleRow(title: String, onSeeAllClicked: () -> Unit) {
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-private fun TopRatedGames(topRatedGames: DiscoverViewItem) {
+private fun TopRatedGames(topRatedGames: DiscoverViewItem, navigateToGameDetail: (String) -> Unit) {
   val pagerState = rememberPagerState(pageCount = { topRatedGames.listData.size })
   HorizontalPager(modifier = Modifier.padding(vertical = 10.dp), state = pagerState) { page ->
-    HeroPagerItem(game = topRatedGames.listData[page])
+    HeroPagerItem(game = topRatedGames.listData[page], navigateToGameDetail = navigateToGameDetail)
   }
 }
 
 @Composable
-private fun HeroPagerItem(game: NetworkGame) {
-  Row(modifier = Modifier.fillMaxWidth().padding(), verticalAlignment = Alignment.Top) {
+private fun HeroPagerItem(game: NetworkGame, navigateToGameDetail: (String) -> Unit) {
+  Row(
+    modifier = Modifier.fillMaxWidth().padding().clickable { navigateToGameDetail(game.slug) },
+    verticalAlignment = Alignment.Top,
+  ) {
     AsyncImage(
       model = game.cover?.buildUrl(),
       contentDescription = "",
