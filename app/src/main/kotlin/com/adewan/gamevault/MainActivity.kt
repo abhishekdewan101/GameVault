@@ -12,7 +12,6 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.adewan.gamevault.effects.InsetColorEffect
@@ -73,7 +72,7 @@ fun GameVaultInternal(
     bottomBar = { if (!shouldHideBottomBar) GVBottomBar(navController = navController) },
   ) {
     GVNavHost(
-      modifier = Modifier.padding(it).padding(horizontal = 16.dp),
+      modifier = Modifier.padding(it),
       navController = navController,
       startDestination = initialStartDestination,
     )

@@ -59,7 +59,10 @@ fun DiscoverView(
   navigateToGameDetail: (String) -> Unit,
   navigateToGameList: (ListType) -> Unit,
 ) {
-  Scaffold(modifier = Modifier.fillMaxSize(), topBar = { DiscoverTopBar() }) {
+  Scaffold(
+    modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+    topBar = { DiscoverTopBar() },
+  ) {
     when (uiState) {
       is UiState.Initial,
       is UiState.Loading -> ProgressView()

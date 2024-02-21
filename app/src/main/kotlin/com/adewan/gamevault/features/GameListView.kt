@@ -50,7 +50,10 @@ fun GameListView(
 ) {
   val games = games.collectAsLazyPagingItems()
 
-  Scaffold(topBar = { GameListTopBar(title = title, onBack = onBack) }) {
+  Scaffold(
+    modifier = Modifier.padding(horizontal = 16.dp),
+    topBar = { GameListTopBar(title = title, onBack = onBack) },
+  ) {
     BoxWithConstraints(modifier = Modifier.padding(it)) {
       when (games.loadState.refresh) {
         is LoadState.Loading -> ProgressView()

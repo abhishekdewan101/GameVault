@@ -33,7 +33,7 @@ import com.adewan.gamevault.utils.DarkPreview
 
 @Composable
 fun VaultView() {
-  Scaffold(topBar = { VaultTopBar() }) {
+  Scaffold(modifier = Modifier.padding(horizontal = 16.dp), topBar = { VaultTopBar() }) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(it)) {
       val minItemWidth = (maxWidth - 10.dp.times(2)) / 3
       LazyVerticalGrid(
